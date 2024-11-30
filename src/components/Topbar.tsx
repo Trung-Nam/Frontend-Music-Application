@@ -1,7 +1,8 @@
 import { SignedOut } from "@clerk/clerk-react";
 import { LayoutDashboardIcon } from "lucide-react";
 import { Link } from "react-router-dom";
-import SignOAuthButtons from "./SignOAuthButtons";
+import SignInOAuthButtons from "./SignInOAuthButtons";
+
 
 const Topbar = () => {
     const isAdmin = false;
@@ -24,7 +25,7 @@ const Topbar = () => {
         )}
 
         <SignedOut>
-            <SignOAuthButtons/>
+            <SignInOAuthButtons/>
         </SignedOut>
       </div>
     </div>
