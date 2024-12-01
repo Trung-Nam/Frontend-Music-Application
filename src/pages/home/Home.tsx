@@ -3,6 +3,7 @@ import { useMusic } from "@/stores/useMusic";
 import { useEffect } from "react";
 import FeaturedSection from "./components/FeaturedSection";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import SectionGrid from "./components/SectionGrid";
 
 const Home = () => {
   const {
@@ -32,11 +33,19 @@ const Home = () => {
             Good afternoon
           </h1>
           <FeaturedSection />
-        </div>
 
-        <div className="space-y-8">
-          <p>Made for you</p>
-          <p>Trending</p>
+          <div className="space-y-8">
+            <SectionGrid
+              title="Made For You"
+              songs={madeForYouSongs}
+              isLoading={isLoading}
+            />
+            <SectionGrid
+              title="Trending"
+              songs={trendingSongs}
+              isLoading={isLoading}
+            />
+          </div>
         </div>
       </ScrollArea>
     </main>
