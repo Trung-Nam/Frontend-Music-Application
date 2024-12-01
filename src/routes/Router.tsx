@@ -1,8 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Home from "../pages/home/Home";
+import Chat from "../pages/chat/Chat";
 import AuthCallback from "../pages/auth-callback/AuthCallback";
 import { AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
+import MainLayout from "@/layout/MainLayout";
 
 const router = createBrowserRouter([
   {
@@ -10,8 +12,18 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "",
-        element: <Home />,
+        path: "/",
+        element: <MainLayout />,
+        children: [
+          {
+            path: "",
+            element: <Home />
+          },
+          {
+            path: "/chat",
+            element: <Chat />
+          },
+        ],
       },
       {
         path: "/sso-callback",
