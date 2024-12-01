@@ -1,11 +1,13 @@
-import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
+import { SignedOut, UserButton } from "@clerk/clerk-react";
 import { LayoutDashboardIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import SignInOAuthButtons from "./SignInOAuthButtons";
+import { useAuth } from "@/stores/useAuth";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "./ui/button";
 
 const Topbar = () => {
-  const isAdmin = false;
-  const { signOut } = useAuth();
+  const { isAdmin } = useAuth();
 
   return (
     <div
@@ -13,30 +15,28 @@ const Topbar = () => {
     backdrop-blur-md z-10
     "
     >
-      <div className="flex gap-2 items-center">Music Flow</div>
+      <div className="flex gap-2 items-center">
+        <img src={"/logo.png"} alt="logo" className="size-8" />
+        Music Flow
+      </div>
 
       <div className="flex items-center gap-4">
         {isAdmin && (
-          <Link to="/admin" className="flex items-center gap-2">
-            <LayoutDashboardIcon className="size-4" />
+          <Link
+            to="/admin"
+            className={cn(buttonVariants({ variant: "outline" }))}
+          >
+            <LayoutDashboardIcon className="size-4 mr-2" />
             Admin Dashboard
           </Link>
         )}
-
-        {/* Render Sign Out button when user is signed in */}
-        <SignedIn>
-          <button
-            onClick={() => signOut()}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-          >
-            Sign Out
-          </button>
-        </SignedIn>
 
         {/* Render Sign In options when user is signed out */}
         <SignedOut>
           <SignInOAuthButtons />
         </SignedOut>
+
+        <UserButton />
       </div>
     </div>
   );
