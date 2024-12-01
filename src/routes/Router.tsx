@@ -5,6 +5,7 @@ import Chat from "../pages/chat/Chat";
 import AuthCallback from "../pages/auth-callback/AuthCallback";
 import { AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
 import MainLayout from "@/layout/MainLayout";
+import Album from "@/pages/album/Album";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
           {
             path: "/chat",
             element: <Chat />
+          },
+          {
+            path: "/albums/:albumId",
+            element: <Album />
           },
         ],
       },
