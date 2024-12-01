@@ -2,15 +2,12 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMusic } from "@/stores/useMusic";
 import { usePlayer } from "@/stores/usePlayer";
+import { formatDuration } from "@/utils/formatter";
 import { Clock, Pause, Play } from "lucide-react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-const formatDuration = (seconds: number) => {
-  const minutes = Math.floor(seconds / 60);
-  const remaining = seconds % 60;
-  return `${minutes}:${remaining.toString().padStart(2, "0")}`;
-};
+
 
 const Album = () => {
   const { albumId } = useParams();
