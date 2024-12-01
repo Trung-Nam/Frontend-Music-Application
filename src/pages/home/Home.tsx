@@ -2,7 +2,7 @@ import Topbar from "@/components/Topbar"
 
 const Home = () => {
   return (
-    <div>
+    <div className="h-full">
       <Topbar/>
     </div>
   )
