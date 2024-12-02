@@ -6,6 +6,7 @@ import AuthCallback from "../pages/auth-callback/AuthCallback";
 import { AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
 import MainLayout from "@/layout/MainLayout";
 import Album from "@/pages/album/Album";
+import Admin from "@/pages/admin/Admin";
 
 const router = createBrowserRouter([
   {
@@ -18,15 +19,15 @@ const router = createBrowserRouter([
         children: [
           {
             path: "",
-            element: <Home />
+            element: <Home />,
           },
           {
             path: "/chat",
-            element: <Chat />
+            element: <Chat />,
           },
           {
             path: "/albums/:albumId",
-            element: <Album />
+            element: <Album />,
           },
         ],
       },
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
       {
         path: "/auth-callback",
         element: <AuthCallback />,
+      },
+      {
+        path: "/admin",
+        element: <Admin />,
       },
     ],
   },
