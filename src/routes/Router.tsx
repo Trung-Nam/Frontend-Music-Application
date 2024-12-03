@@ -7,6 +7,7 @@ import { AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
 import MainLayout from "@/layout/MainLayout";
 import Album from "@/pages/album/Album";
 import Admin from "@/pages/admin/Admin";
+import NotFound from "@/pages/404/NotFound";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
           {
             path: "/albums/:albumId",
             element: <Album />,
+          },
+          {
+            path: "/*",
+            element: <NotFound />,
           },
         ],
       },
