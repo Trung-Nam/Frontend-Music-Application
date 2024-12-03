@@ -22,7 +22,7 @@ interface ChatStore {
   setSelectedUser: (user: User | null) => void;
 }
 
-const baseUrl = "http://localhost:5000";
+const baseUrl = import.meta.env.MODE === "development" ? "http://localhost:5000" : "https://backend-music-flow-application.onrender.com";
 
 const socket = io(baseUrl, {
   autoConnect: false, // only connect if user is authenticated
