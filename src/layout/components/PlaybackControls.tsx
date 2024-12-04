@@ -13,14 +13,25 @@ import {
   SkipBack,
   SkipForward,
   Volume1,
+  VolumeOff,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export const PlaybackControls = () => {
-  const { currentSong, isPlaying, togglePlay, playNext, playPrevious } =
-    usePlayer();
+  const {
+    currentSong,
+    isPlaying,
+    isRepeating,
+    isShuffling, 
+    togglePlay,
+    playNext,
+    playPrevious,
+    repeatSong,
+    toggleShuffle
+  } = usePlayer();
 
-  const [volume, setVolume] = useState(75);
+  const [volume, setVolume] = useState(50);
+  const [previousVolume, setPreviousVolume] = useState(50);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -56,6 +67,23 @@ export const PlaybackControls = () => {
     }
   };
 
+  const toggleMute = () => {
+    if (volume === 0) {
+      // Unmute and restore the previous volume
+      setVolume(previousVolume);
+      if (audioRef.current) {
+        audioRef.current.volume = previousVolume / 100;
+      }
+    } else {
+      // Mute and store the current volume
+      setPreviousVolume(volume);
+      setVolume(0);
+      if (audioRef.current) {
+        audioRef.current.volume = 0;
+      }
+    }
+  };
+
   return (
     <footer className="h-20 sm:h-24 bg-zinc-900 border-t border-zinc-800 px-4">
       <div className="flex justify-between items-center h-full max-w-[1800px] mx-auto">
@@ -86,11 +114,13 @@ export const PlaybackControls = () => {
             <Button
               size="icon"
               variant="ghost"
-              className="hidden sm:inline-flex hover:text-white text-zinc-400"
+              className={`hidden sm:inline-flex hover:text-white text-zinc-400 ${
+                isShuffling ? "text-primary" : ""
+              }`}
+              onClick={toggleShuffle}
             >
               <Shuffle className="h-4 w-4" />
             </Button>
-
             <Button
               size="icon"
               variant="ghost"
@@ -100,7 +130,6 @@ export const PlaybackControls = () => {
             >
               <SkipBack className="h-4 w-4" />
             </Button>
-
             <Button
               size="icon"
               className="bg-white hover:bg-white/80 text-black rounded-full h-8 w-8"
@@ -125,7 +154,10 @@ export const PlaybackControls = () => {
             <Button
               size="icon"
               variant="ghost"
-              className="hidden sm:inline-flex hover:text-white text-zinc-400"
+              className={`hidden sm:inline-flex hover:text-white text-zinc-400 ${
+                isRepeating ? "text-primary" : ""
+              }`}
+              onClick={repeatSong}
             >
               <Repeat className="h-4 w-4" />
             </Button>
@@ -176,8 +208,13 @@ export const PlaybackControls = () => {
               size="icon"
               variant="ghost"
               className="hover:text-white text-zinc-400"
+              onClick={toggleMute}
             >
-              <Volume1 className="h-4 w-4" />
+              {volume === 0 ? (
+                <VolumeOff className="h-4 w-4" />
+              ) : (
+                <Volume1 className="h-4 w-4" />
+              )}
             </Button>
 
             <Slider

@@ -8,6 +8,7 @@ import MainLayout from "@/layout/MainLayout";
 import Album from "@/pages/album/Album";
 import Admin from "@/pages/admin/Admin";
 import NotFound from "@/pages/404/NotFound";
+import SongsList from "@/pages/home/components/SongsList";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,14 @@ const router = createBrowserRouter([
           {
             path: "/albums/:albumId",
             element: <Album />,
+          },
+          {
+            path: "/made-for-you/list",
+            element: <SongsList />,
+          },
+          {
+            path: "/trending/list",
+            element: <SongsList />,
           },
           {
             path: "/*",

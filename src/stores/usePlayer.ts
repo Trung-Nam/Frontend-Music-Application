@@ -5,6 +5,8 @@ import { useChat } from "./useChat";
 interface PlayerStore {
   currentSong: Song | null;
   isPlaying: boolean;
+  isRepeating: boolean;
+  isShuffling: boolean;
   queue: Song[];
   currentIndex: number;
 
@@ -14,11 +16,15 @@ interface PlayerStore {
   togglePlay: () => void;
   playNext: () => void;
   playPrevious: () => void;
+  repeatSong: () => void;
+  toggleShuffle: () => void;
 }
 
 export const usePlayer = create<PlayerStore>((set, get) => ({
   currentSong: null,
   isPlaying: false,
+  isRepeating: false,
+  isShuffling: false,
   queue: [],
   currentIndex: -1,
 
@@ -90,12 +96,16 @@ export const usePlayer = create<PlayerStore>((set, get) => ({
     });
   },
   playNext: () => {
-    const { currentIndex, queue } = get();
-    const nextIndex = currentIndex + 1;
+    const { currentIndex, queue, isShuffling } = get();
 
-    // if there is a next song to play, let's play it
-    if (nextIndex < queue.length) {
-      const nextSong = queue[nextIndex];
+    if (isShuffling) {
+      // Pick a random index from the queue that is not the current song
+      let randomIndex;
+      do {
+        randomIndex = Math.floor(Math.random() * queue.length);
+      } while (randomIndex === currentIndex);
+
+      const nextSong = queue[randomIndex];
 
       const socket = useChat.getState().socket;
       if (socket.auth) {
@@ -107,19 +117,40 @@ export const usePlayer = create<PlayerStore>((set, get) => ({
 
       set({
         currentSong: nextSong,
-        currentIndex: nextIndex,
+        currentIndex: randomIndex,
         isPlaying: true,
       });
     } else {
-      // no next song
-      set({ isPlaying: false });
+      const nextIndex = currentIndex + 1;
 
-      const socket = useChat.getState().socket;
-      if (socket.auth) {
-        socket.emit("update_activity", {
-          userId: socket.auth.userId,
-          activity: "Idle",
+      // if there is a next song to play, let's play it
+      if (nextIndex < queue.length) {
+        const nextSong = queue[nextIndex];
+
+        const socket = useChat.getState().socket;
+        if (socket.auth) {
+          socket.emit("update_activity", {
+            userId: socket.auth.userId,
+            activity: `Playing ${nextSong.title} by ${nextSong.artist}`,
+          });
+        }
+
+        set({
+          currentSong: nextSong,
+          currentIndex: nextIndex,
+          isPlaying: true,
         });
+      } else {
+        // no next song
+        set({ isPlaying: false });
+
+        const socket = useChat.getState().socket;
+        if (socket.auth) {
+          socket.emit("update_activity", {
+            userId: socket.auth.userId,
+            activity: "Idle",
+          });
+        }
       }
     }
   },
@@ -154,5 +185,32 @@ export const usePlayer = create<PlayerStore>((set, get) => ({
         });
       }
     }
+  },
+  repeatSong: () => {
+    const { currentSong, currentIndex, isRepeating } = get();
+
+    if (!currentSong) return;
+
+    const socket = useChat.getState().socket;
+    if (socket.auth) {
+      socket.emit("update_activity", {
+        userId: socket.auth.userId,
+        activity: isRepeating
+          ? `Stopped repeating`
+          : `Repeating ${currentSong.title} by ${currentSong.artist}`,
+      });
+    }
+
+    set({
+      isRepeating: !isRepeating,
+      isPlaying: true,
+      currentSong: currentSong,
+      currentIndex: currentIndex,
+    });
+  },
+  toggleShuffle: () => {
+    set((state) => ({
+      isShuffling: !state.isShuffling,
+    }));
   },
 }));
