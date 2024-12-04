@@ -22,10 +22,12 @@ export const PlaybackControls = () => {
     currentSong,
     isPlaying,
     isRepeating,
+    isShuffling, 
     togglePlay,
     playNext,
     playPrevious,
     repeatSong,
+    toggleShuffle
   } = usePlayer();
 
   const [volume, setVolume] = useState(50);
@@ -112,7 +114,10 @@ export const PlaybackControls = () => {
             <Button
               size="icon"
               variant="ghost"
-              className="hidden sm:inline-flex hover:text-white text-zinc-400"
+              className={`hidden sm:inline-flex hover:text-white text-zinc-400 ${
+                isShuffling ? "text-primary" : ""
+              }`}
+              onClick={toggleShuffle}
             >
               <Shuffle className="h-4 w-4" />
             </Button>
