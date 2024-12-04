@@ -18,8 +18,15 @@ import {
 import { useEffect, useRef, useState } from "react";
 
 export const PlaybackControls = () => {
-  const { currentSong, isPlaying, togglePlay, playNext, playPrevious } =
-    usePlayer();
+  const {
+    currentSong,
+    isPlaying,
+    isRepeating,
+    togglePlay,
+    playNext,
+    playPrevious,
+    repeatSong,
+  } = usePlayer();
 
   const [volume, setVolume] = useState(50);
   const [previousVolume, setPreviousVolume] = useState(50);
@@ -109,7 +116,6 @@ export const PlaybackControls = () => {
             >
               <Shuffle className="h-4 w-4" />
             </Button>
-
             <Button
               size="icon"
               variant="ghost"
@@ -119,7 +125,6 @@ export const PlaybackControls = () => {
             >
               <SkipBack className="h-4 w-4" />
             </Button>
-
             <Button
               size="icon"
               className="bg-white hover:bg-white/80 text-black rounded-full h-8 w-8"
@@ -144,7 +149,10 @@ export const PlaybackControls = () => {
             <Button
               size="icon"
               variant="ghost"
-              className="hidden sm:inline-flex hover:text-white text-zinc-400"
+              className={`hidden sm:inline-flex hover:text-white text-zinc-400 ${
+                isRepeating ? "text-primary" : ""
+              }`}
+              onClick={repeatSong}
             >
               <Repeat className="h-4 w-4" />
             </Button>

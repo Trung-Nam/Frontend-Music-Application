@@ -5,6 +5,7 @@ import { useChat } from "./useChat";
 interface PlayerStore {
   currentSong: Song | null;
   isPlaying: boolean;
+  isRepeating: boolean; 
   queue: Song[];
   currentIndex: number;
 
@@ -14,6 +15,7 @@ interface PlayerStore {
   togglePlay: () => void;
   playNext: () => void;
   playPrevious: () => void;
+  repeatSong: () => void;
 }
 
 export const usePlayer = create<PlayerStore>((set, get) => ({
@@ -21,6 +23,7 @@ export const usePlayer = create<PlayerStore>((set, get) => ({
   isPlaying: false,
   queue: [],
   currentIndex: -1,
+  isRepeating: false,
 
   initializeQueue: (songs: Song[]) => {
     set({
@@ -155,4 +158,28 @@ export const usePlayer = create<PlayerStore>((set, get) => ({
       }
     }
   },
+  repeatSong: () => {
+    const { currentSong, currentIndex, isRepeating } = get();
+  
+    if (!currentSong) return;
+  
+    const socket = useChat.getState().socket;
+    if (socket.auth) {
+      socket.emit("update_activity", {
+        userId: socket.auth.userId,
+        activity: isRepeating
+          ? `Stopped repeating`
+          : `Repeating ${currentSong.title} by ${currentSong.artist}`,
+      });
+    }
+  
+    set({
+      isRepeating: !isRepeating,
+      isPlaying: true,
+      currentSong: currentSong,
+      currentIndex: currentIndex,
+    });
+
+  },  
+  
 }));
