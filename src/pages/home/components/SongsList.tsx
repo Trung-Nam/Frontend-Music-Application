@@ -1,28 +1,35 @@
-import SectionGridSkeleton from "@/components/skeletons/SectionGridSkeleton";
-// import { Button } from "@/components/ui/button";
+import { useMusic } from "@/stores/useMusic";
 import { Song } from "@/types";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import PlayButton from "./PlayButton";
-import { Link } from "react-router-dom";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import SectionGridSkeleton from "@/components/skeletons/SectionGridSkeleton";
 
-type SectionGridProps = {
-  title: string;
-  songs: Song[];
-  isLoading: boolean;
-};
-const SectionGrid = ({ title, songs, isLoading }: SectionGridProps) => {
+const SongsList = () => {
+  const location = useLocation();
+  const [songs, setSongs] = useState<Song[]>([]);
+  const [title, setTitle] = useState("");
+  const { isLoading, trendingSongs, madeForYouSongs } = useMusic();
+
+  useEffect(() => {
+    if (location.pathname === "/made-for-you/list") {
+      setSongs(madeForYouSongs);
+      setTitle("Made For You Songs");
+    } else if (location.pathname === "/trending/list") {
+      setSongs(trendingSongs);
+      setTitle("Trending Songs");
+    }
+  }, [location.pathname, madeForYouSongs, trendingSongs]);
+
   if (isLoading) {
     return <SectionGridSkeleton />;
   }
+
   return (
-    <div className="mb-8">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl sm:text-2xl font-bold">{title}</h2>
-        <Link
-          to={title === "Trending" ? "/trending/list" : "/made-for-you/list"}
-          className="text-sm text-zinc-400 hover:text-white"
-        >
-          Show all
-        </Link>
+    <ScrollArea className="h-[calc(100vh-180px)]">
+      <div className="flex items-center justify-center mt-4 mb-8">
+        <h2 className="text-3xl sm:text-2xl font-bold">{title}</h2>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -38,7 +45,6 @@ const SectionGrid = ({ title, songs, isLoading }: SectionGridProps) => {
                   alt={song.title}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
-                {/* todo: add play btn */}
                 <PlayButton song={song} />
               </div>
             </div>
@@ -47,8 +53,8 @@ const SectionGrid = ({ title, songs, isLoading }: SectionGridProps) => {
           </div>
         ))}
       </div>
-    </div>
+    </ScrollArea>
   );
 };
 
-export default SectionGrid;
+export default SongsList;
