@@ -57,6 +57,13 @@ const AudioPlayer = () => {
     }
   }, [currentSong, isPlaying]);
 
+  // Set loop property based on isRepeating state
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.loop = isRepeating;
+    }
+  }, [isRepeating]);
+
   return <audio ref={audioRef} />;
 };
 
