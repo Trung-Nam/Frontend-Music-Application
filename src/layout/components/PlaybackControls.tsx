@@ -13,6 +13,7 @@ import {
   SkipBack,
   SkipForward,
   Volume1,
+  VolumeOff,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -20,7 +21,8 @@ export const PlaybackControls = () => {
   const { currentSong, isPlaying, togglePlay, playNext, playPrevious } =
     usePlayer();
 
-  const [volume, setVolume] = useState(75);
+  const [volume, setVolume] = useState(50);
+  const [previousVolume, setPreviousVolume] = useState(50);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -53,6 +55,23 @@ export const PlaybackControls = () => {
   const handleSeek = (value: number[]) => {
     if (audioRef.current) {
       audioRef.current.currentTime = value[0];
+    }
+  };
+
+  const toggleMute = () => {
+    if (volume === 0) {
+      // Unmute and restore the previous volume
+      setVolume(previousVolume);
+      if (audioRef.current) {
+        audioRef.current.volume = previousVolume / 100;
+      }
+    } else {
+      // Mute and store the current volume
+      setPreviousVolume(volume);
+      setVolume(0);
+      if (audioRef.current) {
+        audioRef.current.volume = 0;
+      }
     }
   };
 
@@ -176,8 +195,13 @@ export const PlaybackControls = () => {
               size="icon"
               variant="ghost"
               className="hover:text-white text-zinc-400"
+              onClick={toggleMute}
             >
-              <Volume1 className="h-4 w-4" />
+              {volume === 0 ? (
+                <VolumeOff className="h-4 w-4" />
+              ) : (
+                <Volume1 className="h-4 w-4" />
+              )}
             </Button>
 
             <Slider
